@@ -2,7 +2,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 from pydantic import BaseModel
 import mysql.connector
-
+import os
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -18,10 +18,10 @@ class User(BaseModel):
 @app.get("/users")
 def get_users():
     conn = mysql.connector.connect(
-        host="localhost",
-        user="user",
-        password="password",
-        database="testdb"
+        host=os.getenv("DB_HOST", "localhost"),
+        user=os.getenv("DB_USER", "user"),
+        password=os.getenv("DB_PASSWORD", "password"),
+        database=os.getenv("DB_NAME", "testdb")
     )
     cursor = conn.cursor()
     cursor.execute("SELECT id, name FROM users")
